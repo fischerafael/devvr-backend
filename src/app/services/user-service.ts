@@ -1,7 +1,7 @@
-import { setLocationData } from '../controllers/helpers';
-import User from '../database/Models/User';
-import { formatResponse, getUserGitHubAvatar, stringToArray } from '../helpers';
 import UserRepository from '../repositories/user-repository';
+
+import { setLocationData } from '../controllers/helpers';
+import { formatResponse, getUserGitHubAvatar, stringToArray } from '../helpers';
 
 const UserService = {
 	async create(user: IUserRequest) {
@@ -38,22 +38,13 @@ const UserService = {
 		const userLikes = user.likes;
 		const userDislikes = user.dislikes;
 
-		const users = await User.find({
-			location: {
-				$near: {
-					$geometry: {
-						type: 'Point',
-						coordinates: [longitude, latitude]
-					},
-					$maxDistance: parseInt(maxDistance)
-				}
-			}
-		}).where({
-			$and: [
-				{ _id: { $ne: userId } },
-				{ _id: { $nin: userDislikes } },
-				{ _id: { $nin: userLikes } }
-			]
+		const users = await UserRepository.findByMaxDistLocation({
+			latitude,
+			longitude,
+			maxDistance,
+			userId,
+			userLikes,
+			userDislikes
 		});
 
 		return formatResponse(200, users);

@@ -18,8 +18,8 @@ interface IUserData {
 }
 
 interface IfindByMaxDistLocation {
-	longitude: number;
-	latitude: number;
+	longitude: string;
+	latitude: string;
 	maxDistance: string;
 	userId: string;
 	userLikes: string[];
